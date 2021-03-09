@@ -2,7 +2,6 @@ package com.calendar.calendarapp.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 // @EnableWebSecurity
@@ -17,9 +16,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                     .antMatchers("/", "/index", "/home").permitAll()
                     .anyRequest().authenticated()
                     .and()
-                    .oauth2Login()/*.loginPage("/home")*/
-                    .defaultSuccessUrl("/welcome", true)
-                    .failureUrl("/home")
+                    .oauth2Login().loginPage("/home")
+                    .defaultSuccessUrl("https://googleeventsapp.herokuapp.com/welcome", true)
+                    .failureUrl("https://googleeventsapp.herokuapp.com/home")
                     .and().
                             logout().logoutSuccessUrl("/");
     }
