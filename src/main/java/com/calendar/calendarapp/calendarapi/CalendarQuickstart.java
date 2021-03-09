@@ -1,3 +1,4 @@
+/*
 package com.calendar.calendarapp.calendarapi;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -30,20 +31,24 @@ public class CalendarQuickstart
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     
-    /**
+    */
+/**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
-     */
+     *//*
+
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
     
-    /**
+    */
+/**
      * Creates an authorized Credential object.
      *
      * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
-     */
+     *//*
+
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException
     {
         // Load client secrets.
@@ -99,4 +104,4 @@ public class CalendarQuickstart
             }
         }
     }
-}
+}*/

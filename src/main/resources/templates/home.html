@@ -26,7 +26,7 @@
                 <p class="lead mt-2">This is a simple single sign-on.</p>
                 <hr class="my-4">
             </div>
-            <a href="#" onclick="signOut();">Sign out</a>
+
 
         </div>
     </div>
@@ -66,25 +66,20 @@
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
-        window.location.href = 'https://googleeventsapp.herokuapp.com//welcome';
-        document.location.href = 'https://googleeventsapp.herokuapp.com//welcome'
+        // window.location.href = 'https://googleeventsapp.herokuapp.com//welcome';
+        // document.location.href = 'https://googleeventsapp.herokuapp.com//welcome'
         // The ID token you need to pass to your backend:
         /*postAJAX('/server/sign-in', {id_token: id_token})
             .then(function (user) {
                 // The user is now signed in on the server too
                 // and the user should now have a session cookie
                 // for the whole site.
-                // document.location.href = '/welcome'
+                document.location.href = '/welcome'
                 window.location.href = 'https://googleeventsapp.herokuapp.com//welcome';
             })*/
     }
 
-    function signOut() {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function () {
-            console.log('User signed out.');
-        });
-    }
+
 
 
 </script>
