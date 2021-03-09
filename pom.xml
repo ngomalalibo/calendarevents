@@ -96,7 +96,7 @@
             </plugin>
 
 
-
+            <!--Heroku deployment along with ProcFile and system.properties files. Also change project output folder to target folder-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
