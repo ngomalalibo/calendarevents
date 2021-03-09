@@ -26,6 +26,8 @@
                 <p class="lead mt-2">This is a simple single sign-on.</p>
                 <hr class="my-4">
             </div>
+            <a href="#" onclick="signOut();">Sign out</a>
+
         </div>
     </div>
 </div>
@@ -75,6 +77,13 @@
                 window.location.href = 'https://googleeventsapp.herokuapp.com//welcome';
             })*/
     }
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            console.log('User signed out.');
+        });
+    }
+
 
 
 </script>
