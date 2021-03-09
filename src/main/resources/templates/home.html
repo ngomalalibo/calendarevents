@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Welcome to Calendar App</title>
+    <title>Google Calendar App</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id"
           content="941770538484-tkiv05ecpmqalrrshon3ndghkdujuqh6.apps.googleusercontent.com">
@@ -64,6 +64,15 @@
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
+
+        // The ID token you need to pass to your backend:
+        postAJAX('/server/sign-in', {id_token: id_token})
+            .then(function (user) {
+                // The user is now signed in on the server too
+                // and the user should now have a session cookie
+                // for the whole site.
+                document.location.href = '/welcome'
+            })
     }
 
 

@@ -16,4 +16,10 @@ public class CalendarController
         
         return "home";
     }
+    
+    @GetMapping("/welcome")
+    public String welcome(Model model)
+    {
+        return "welcome";
+    }
 }
