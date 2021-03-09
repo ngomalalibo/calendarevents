@@ -59,10 +59,4 @@ public class CalendarController
     {
         return "welcome";
     }
-    
-    @GetMapping("/index")
-    public String index(Model model)
-    {
-        return "index";
-    }
 }
