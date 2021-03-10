@@ -15,7 +15,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                     .anyRequest().authenticated()
                     .and()
                     .oauth2Login()/*.loginPage("https://googleeventsapp.herokuapp.com")*/
-                    .defaultSuccessUrl("http://googleeventsapp.herokuapp.com/welcome")
+                    .defaultSuccessUrl("https://googleeventsapp.herokuapp.com/welcome")
                     .and().logout().logoutSuccessUrl("https://googleeventsapp.herokuapp.com");
     }
 }
