@@ -51,13 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                     .and().logout().logoutSuccessUrl("https://googleeventsapp.herokuapp.com");
     }*/
     
-    @Bean
-    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest>
-    accessTokenResponseClient()
-    {
-        
-        return new NimbusAuthorizationCodeTokenResponseClient();
-    }
     
     @Override
     protected void configure(HttpSecurity http) throws Exception
@@ -72,17 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
             .clientRegistrationRepository(clientRegistrationRepository())
             .authorizedClientService(authorizedClientService())
             .defaultSuccessUrl("https://googleeventsapp.herokuapp.com/welcome")
-            .failureUrl("https://googleeventsapp.herokuapp.com/welcome/")
-            .tokenEndpoint()
-            .accessTokenResponseClient(accessTokenResponseClient())
-            .and()
-            .authorizationEndpoint()
-            .baseUri("/oauth2/authorization")
-            .authorizationRequestRepository(authorizationRequestRepository())
-            .and()
-            .redirectionEndpoint()
-            .baseUri("login/oauth2/code");
-            // .baseUri("/oauth2/redirect");
+            .failureUrl("https://googleeventsapp.herokuapp.com/welcome");
+        // .baseUri("/oauth2/redirect");
     }
     
     @Bean
