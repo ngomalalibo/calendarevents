@@ -6,14 +6,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class CalendarappApplication // extends SpringBootServletInitializer // heroku deployment
+public class CalendarappApplication extends SpringBootServletInitializer // heroku deployment
 {
-    /*@Override
+    @Override
     protected SpringApplicationBuilder configure(
             SpringApplicationBuilder builder)
     {
         return builder.sources(CalendarappApplication.class);
-    }*/
+    }
     
     public static void main(String[] args)
     {
