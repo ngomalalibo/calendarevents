@@ -69,6 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
             .authenticated()
             .and()
             .oauth2Login().loginPage("/home")
+            .clientRegistrationRepository(clientRegistrationRepository())
+            .authorizedClientService(authorizedClientService())
             .defaultSuccessUrl("https://googleeventsapp.herokuapp.com/welcome")
             .failureUrl("https://googleeventsapp.herokuapp.com/welcome/")
             .tokenEndpoint()
