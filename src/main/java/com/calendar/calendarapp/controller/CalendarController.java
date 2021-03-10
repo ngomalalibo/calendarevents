@@ -1,9 +1,9 @@
 package com.calendar.calendarapp.controller;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class CalendarController
 {
     
@@ -11,13 +11,13 @@ public class CalendarController
     public String getHome()
     {
         
-        return "Home Page";
+        return "home";
     }
     
     @GetMapping("/welcome")
     public String welcome()
     {
-        return "Welcome! Login successful";
+        return "welcome";
     }
     /*private OAuth2AuthorizedClientService authorizedClientService;
     

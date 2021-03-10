@@ -13,9 +13,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     public void configure(HttpSecurity httpSecurity) throws Exception
     {
         httpSecurity.csrf().disable().antMatcher("/**").authorizeRequests()
-                    .antMatchers("/").permitAll()
+                    .antMatchers("/", "/home").permitAll()
                     .anyRequest().authenticated()
                     .and()
-                    .oauth2Login();
+                    .oauth2Login().loginPage("/home");
     }
 }
