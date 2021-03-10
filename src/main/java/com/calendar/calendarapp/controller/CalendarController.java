@@ -47,7 +47,7 @@ public class CalendarController
         return "loginSuccess";
     }
     
-    @GetMapping({"/home", "", "/"})
+    @GetMapping({"/home", "/"})
     public String getHome(Model model)
     {
         
