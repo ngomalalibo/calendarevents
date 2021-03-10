@@ -1,12 +1,24 @@
 package com.calendar.calendarapp.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class CalendarController
 {
+    
+    @GetMapping({"/"})
+    public String getHome()
+    {
+        
+        return "Home Page";
+    }
+    
+    @GetMapping("/welcome")
+    public String welcome()
+    {
+        return "Welcome! Login successful";
+    }
     /*private OAuth2AuthorizedClientService authorizedClientService;
     
     @GetMapping("/loginSuccess")
@@ -34,16 +46,5 @@ public class CalendarController
         return "loginSuccess";
     }*/
     
-    @GetMapping({"/home", "/"})
-    public String getHome(Model model)
-    {
-        
-        return "home";
-    }
     
-    @GetMapping("/welcome")
-    public String welcome(Model model)
-    {
-        return "welcome";
-    }
 }
