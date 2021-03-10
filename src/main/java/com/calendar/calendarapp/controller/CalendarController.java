@@ -19,7 +19,7 @@ import java.util.Map;
 public class CalendarController
 {
     
-    @GetMapping({"/"})
+    @GetMapping({"/", "'home"})
     public String getHome()
     {
         
