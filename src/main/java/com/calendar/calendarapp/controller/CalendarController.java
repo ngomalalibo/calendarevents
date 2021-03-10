@@ -20,7 +20,7 @@ import java.util.Map;
 @RequestMapping("/")
 public class CalendarController
 {
-    private OAuth2AuthorizedClientService authorizedClientService;
+    /*private OAuth2AuthorizedClientService authorizedClientService;
     
     @GetMapping("/loginSuccess")
     public String getLoginInfo(Model model, OAuth2AuthenticationToken authentication)
@@ -45,7 +45,7 @@ public class CalendarController
             model.addAttribute("name", userAttributes.get("name"));
         }
         return "loginSuccess";
-    }
+    }*/
     
     @GetMapping({"/home", "/"})
     public String getHome(Model model)
