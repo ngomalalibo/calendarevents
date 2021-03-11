@@ -65,7 +65,7 @@
         <tr th:each="calendarObj: ${calendarObjs}">
             <td th:text="${calendarObj.eventDay}" class="td1"></td>
             <td th:text="${calendarObj.startEnd}" class="td1"></td>
-            <td th:text="${calendarObj.title}" class="td2"></td>
+            <td th:text=${calendarObj.title} class="td2"></td>
         </tr>
         </tbody>
     </table>
