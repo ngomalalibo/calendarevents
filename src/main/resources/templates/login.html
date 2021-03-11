@@ -2,12 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id"
           content="941770538484-tkiv05ecpmqalrrshon3ndghkdujuqh6.apps.googleusercontent.com">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -21,7 +19,7 @@
         .container {
             width: 50%;
             border-radius: 5px;
-            background-color: #f2f2f2;
+            background-color: #f1f1f1;
             padding: 20px 0 30px 0;
             position: fixed;
             top: 50%;
@@ -40,7 +38,7 @@
         }
 
         .google {
-            background-color: #dd4b39;
+            background-color: #4749ce;
             color: white;
         }
 
@@ -52,18 +50,22 @@
 
 <h2 style="text-align:center; color:red" th:utext="${message}"></h2>
 
-<div class="container">
-    <h2 style="text-align:center">Spring Boot Application : Calendar Event</h2>
+<div class="container bg-body">
+    <h2 style="text-align:center">Spring Boot and Google Calendar Event</h2>
 
-    <div>
-        <a th:href="@{/calendar}" class="google btn">
-            <i class="fa fa-google fa-fw"></i> Login with Google
-        </a>
-        <div th:href="@{/calendar}" id="my-signin2" data-theme="dark">Login with Google</div>
-    </div>
+
+    <div class="btn" th:href="@{/calendar}" id="my-signin2" data-theme="dark"></div>
 </div>
 
 <script>
+    function onSuccess(googleUser) {
+        console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+    }
+
+    function onFailure(error) {
+        console.log(error);
+    }
+
     function renderButton() {
         gapi.signin2.render('my-signin2', {
             'scope': 'profile email',
@@ -75,11 +77,35 @@
             'onfailure': onFailure
         });
     }
+
+    function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
+
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("ID Token: " + id_token);
+        // window.location.href = 'https://googleeventsapp.herokuapp.com/welcome';
+        // document.location.href = 'https://googleeventsapp.herokuapp.com/welcome'
+        // The ID token you need to pass to your backend:
+        /*postAJAX('/server/sign-in', {id_token: id_token})
+            .then(function (user) {
+                // The user is now signed in on the server too
+                // and the user should now have a session cookie
+                // for the whole site.
+                document.location.href = '/welcome'
+                window.location.href = 'https://googleeventsapp.herokuapp.com//welcome';
+            })*/
+    }
+
+
 </script>
 <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
-        crossorigin="anonymous"></script>
 </body>
 </html>
