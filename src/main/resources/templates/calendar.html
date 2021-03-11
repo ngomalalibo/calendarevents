@@ -36,12 +36,12 @@
         }
 
         .td1 {
-            width: 30%;
+            width: 25%;
             padding: 10px 10px 10px 5px;
         }
 
         .td2 {
-            width: 70%;
+            width: 50%;
             padding: 0px 0px 10px 20px;
         }
     </style>
@@ -50,12 +50,9 @@
 <body>
 
 <div class="navbar">
-    <a th:href="@{/}">Logout</a>
+    <a th:href="@{/logout}">Logout</a>
     <a th:href="@{/calendar}">Calendar Events</a>
     <a th:href="@{#}" style="float: left;background: #ddd;color: black;font-weight:bold;">Spring Boot Application</a>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Sign Out"/>
-    </form>
 </div>
 
 <div style="width: 50%;margin: 0 auto;margin-top:120px;padding:20px;border: 1px solid gray;">
@@ -66,8 +63,9 @@
         <tbody>
 
         <tr th:each="calendarObj: ${calendarObjs}">
+            <td th:text="${calendarObj.eventDay}" class="td1"></td>
             <td th:text="${calendarObj.startEnd}" class="td1"></td>
-            <td th:text=${calendarObj.title} class="td2"></td>
+            <td th:text="${calendarObj.title}" class="td2"></td>
         </tr>
         </tbody>
     </table>

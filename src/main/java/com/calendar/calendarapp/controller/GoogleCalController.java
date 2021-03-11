@@ -17,7 +17,10 @@ import com.google.api.services.calendar.model.Event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -91,7 +94,7 @@ public class GoogleCalController
             {
                 
                 model.addAttribute("title", "Calendar Events");
-                model.addAttribute("calendarObjs", getCalendarEventList(code, redirectURI,model, authentication));
+                model.addAttribute("calendarObjs", getCalendarEventList(code, redirectURI, model, authentication));
                 
             }
             catch (Exception e)
@@ -216,7 +219,7 @@ public class GoogleCalController
                 
                 Date startDateTime = new Date(event.getStart().getDateTime().getValue());
                 Date endDateTime = new Date(event.getEnd().getDateTime().getValue());
-                
+                DateTime eventDay = event.getStart().getDate();
                 
                 long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
                 int diffmin = (int) (diffInMillies / (60 * 1000));
@@ -237,6 +240,7 @@ public class GoogleCalController
                 calendarObj.setEndHour(endDateTime.getHours());
                 calendarObj.setEndMin(endDateTime.getMinutes());
                 calendarObj.setDuration(diffmin);
+                calendarObj.setEventDay(eventDay);
                 
                 calendarObj.setStartEnd(sdf.format(startDateTime) + " - " + sdf.format(endDateTime));
                 

@@ -54,9 +54,22 @@
         <a th:href="@{/calendar}" class="google btn">
             <i class="fa fa-google fa-fw"></i> Login with Google
         </a>
+        <a th:href="@{/calendar}" id="my-signin2" data-theme="dark">Login with Google</a>
     </div>
 </div>
 
-
+<script>
+    function renderButton() {
+        gapi.signin2.render('my-signin2', {
+            'scope': 'profile email',
+            'width': 240,
+            'height': 50,
+            'longtitle': true,
+            'theme': 'dark',
+            'onsuccess': onSuccess,
+            'onfailure': onFailure
+        });
+    }
+</script>
 </body>
 </html>
