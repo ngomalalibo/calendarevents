@@ -69,7 +69,6 @@ public class GoogleCalController
     private static String userEmail;
     private static String userDisplayName;
     
-    SendMail sendMail = new SendMail();
     
     final DateTime date1 = new DateTime(0);
     final DateTime date2 = new DateTime(new Date());
@@ -148,8 +147,11 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
-        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "out of", userDisplayName));
-        System.out.println("Response " + b);
+        
+        SendMail sendMail = new SendMail();
+        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "into", userDisplayName));
+        String msg = b ? "Message Sent Successfully" : "Message Not Sent";
+        System.out.println(msg);
         return "login";
     }
     
@@ -178,7 +180,10 @@ public class GoogleCalController
             userDisplayName = userAttributes.get("name").toString();
             model.addAttribute("name", userDisplayName);
             
+            SendMail sendMail = new SendMail();
             userEmail = userAttributes.get("email").toString();
+            
+            System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
             boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "into", userDisplayName));
             
             String msg = b ? "Message Sent Successfully" : "Message Not Sent";

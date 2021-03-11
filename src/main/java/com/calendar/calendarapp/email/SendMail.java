@@ -50,7 +50,7 @@ public class SendMail
         mailObject.setPersonName(userName);
         mailObject.setFromAddresses(username != null ? username : "weblibrarianapp@gmail.com");
         mailObject.setLine1(
-                "You have been logged " + action + " the google calendar events app");
+                "You have successfully logged " + action + " the google calendar events app");
         mailObject.setMessage(getTemplate(mailObject));
         
         return mailObject;
@@ -76,28 +76,25 @@ public class SendMail
         });
         
         // Used to debug SMTP issues
-        session.setDebug(true);
+        session.setDebug(false);
         
         try
         {
             MimeMessage message = new MimeMessage(session);
             
             message.setFrom(new InternetAddress(username != null ? username : "weblibrarianapp@gmail.com"));
-            // message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(String.join(",", List.of(username != null ? username : "weblibrarianapp@gmail.com", actionableEmail.getToAddresses()))));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(String.join(",", Arrays.asList(username != null ? username : "weblibrarianapp@gmail.com", actionableEmail.getToAddresses()))));
             message.setSubject(actionableEmail.getSubject());
             message.setSentDate(new Date());
             message.setContent(actionableEmail.getMessage(), "text/html");
-            
             Transport.send(message);
-            
-            System.out.println("Login Successful....");
+            return true;
         }
         catch (MessagingException mex)
         {
             mex.printStackTrace();
+            return false;
         }
-        return true;
     }
     
     
@@ -115,7 +112,8 @@ public class SendMail
     public static void main(String[] args)
     {
         SendMail sendMail = new SendMail();
-        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance("ngomalalibo@yahoo.com", "into", "Ngo Alalibo"));
-        System.out.println("Response " + b);
+        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance("ngomalalibo@gmail.com", "into", "Ngo Alalibo"));
+        String msg = b ? "Message Sent Successfully" : "Message Not Sent";
+        System.out.println(msg);
     }
 }
