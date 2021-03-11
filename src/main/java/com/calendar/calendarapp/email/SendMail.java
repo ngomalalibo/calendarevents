@@ -47,7 +47,7 @@ public class SendMail
         ActionableEmail mailObject = new ActionableEmail();
         mailObject.setSubject("Google Calendar Events - Access Confirmation");
         mailObject.setToAddresses(sentTo);
-        mailObject.setPersonName(username);
+        mailObject.setPersonName(userName);
         mailObject.setFromAddresses(username != null ? username : "weblibrarianapp@gmail.com");
         mailObject.setLine1(
                 "You have been logged " + action + " the google calendar events app");
@@ -115,9 +115,7 @@ public class SendMail
     public static void main(String[] args)
     {
         SendMail sendMail = new SendMail();
-        System.out.println("Template +++++++++++++++++++++++++++++++++");
-        System.out.println(template);
-        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance("ngomalalibo@yahoo.com", "into", username));
+        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance("ngomalalibo@yahoo.com", "into", "Ngo Alalibo"));
         System.out.println("Response " + b);
     }
 }

@@ -55,7 +55,6 @@ public class GoogleCalController
     Credential credential;
     
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy hh:mm a");
-    // private static SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
     
     @Value("${google.client.client-id}")
     private String clientId;
@@ -68,11 +67,10 @@ public class GoogleCalController
     
     private static boolean isAuthorised = false;
     private static String userEmail;
-    private static String userName;
+    private static String userDisplayName;
     
     SendMail sendMail = new SendMail();
     
-    // final DateTime date1 = new DateTime("2017-05-05T16:30:00.000+05:30");
     final DateTime date1 = new DateTime(0);
     final DateTime date2 = new DateTime(new Date());
     
@@ -150,7 +148,7 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
-        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "out of", userName));
+        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "out of", userDisplayName));
         System.out.println("Response " + b);
         return "login";
     }
@@ -177,12 +175,14 @@ public class GoogleCalController
             ResponseEntity<Map> response = restTemplate
                     .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
-            userName = userAttributes.get("name").toString();
-            model.addAttribute("name", userName);
+            userDisplayName = userAttributes.get("name").toString();
+            model.addAttribute("name", userDisplayName);
             
             userEmail = userAttributes.get("email").toString();
-            boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "into", userName));
-            System.out.println("Response " + b);
+            boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "into", userDisplayName));
+            
+            String msg = b ? "Message Sent Successfully" : "Message Not Sent";
+            System.out.println(msg);
         }
     }
     
@@ -200,7 +200,7 @@ public class GoogleCalController
             Calendar.Events events = client.events();
             eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
             message = eventList.getItems().toString();
-            System.out.println("My: " + eventList.getItems());
+            // System.out.println("My: " + eventList.getItems());
             
             getLoginInfo(model, authentication);
             
@@ -241,7 +241,7 @@ public class GoogleCalController
                 
                 calendarObjs.add(calendarObj);
             }
-            System.out.println("cal message:" + message);
+            // System.out.println("cal message:" + message);
             return calendarObjs;
             
         }
