@@ -53,7 +53,8 @@ public class GoogleCalController
     GoogleAuthorizationCodeFlow flow;
     Credential credential;
     
-    private static SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+    private static SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy hh:mm a");
+    // private static SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
     
     @Value("${google.client.client-id}")
     private String clientId;
@@ -92,7 +93,6 @@ public class GoogleCalController
         {
             try
             {
-                
                 model.addAttribute("title", "Calendar Events");
                 model.addAttribute("calendarObjs", getCalendarEventList(code, redirectURI, model, authentication));
                 
@@ -197,11 +197,12 @@ public class GoogleCalController
     private List<CalendarObj> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
     {
         String message;
-        getLoginInfo(model, authentication);
+        
         
         com.google.api.services.calendar.model.Events eventList;
         try
         {
+            //OAuth2AuthenticationToken
             TokenResponse response = flow.newTokenRequest(calenderApiCode).setRedirectUri(redirectURL).execute();
             credential = flow.createAndStoreCredential(response, "userID");
             client = new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
@@ -209,6 +210,8 @@ public class GoogleCalController
             eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
             message = eventList.getItems().toString();
             System.out.println("My: " + eventList.getItems());
+            
+            getLoginInfo(model, authentication);
             
             eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
             
