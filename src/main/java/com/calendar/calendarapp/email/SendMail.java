@@ -42,14 +42,14 @@ public class SendMail
         }
     }
     
-    public static ActionableEmail getMailInstance(String sentTo)
+    public static ActionableEmail getMailInstance(String sentTo, String action)
     {
         ActionableEmail mailObject = new ActionableEmail();
         mailObject.setSubject("Google Calendar Events - Login Confirmation");
         mailObject.setToAddresses(sentTo);
         mailObject.setFromAddresses(username != null ? username : "weblibrarianapp@gmail.com");
         mailObject.setLine1(
-                "You have been logged in/out of the google calendar events app");
+                "You have been logged " + action + " the google calendar events app");
         mailObject.setMessage(getTemplate(mailObject));
         
         return mailObject;

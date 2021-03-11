@@ -1,5 +1,6 @@
 package com.calendar.calendarapp.controller;
 
+import com.calendar.calendarapp.email.SendMail;
 import com.calendar.calendarapp.model.CalendarObj;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
@@ -66,14 +67,11 @@ public class GoogleCalController
     private Set<Event> events = new HashSet<>();
     
     private static boolean isAuthorised = false;
+    private static String userEmail;
     
-    final DateTime date1 = new DateTime("2017-05-05T16:30:00.000+05:30");
+    // final DateTime date1 = new DateTime("2017-05-05T16:30:00.000+05:30");
+    final DateTime date1 = new DateTime(0);
     final DateTime date2 = new DateTime(new Date());
-    
-    private final int START_HOUR = 8;
-    private final int START_MIN = 00;
-    private final int END_HOUR = 20;
-    private final int END_MIN = 00;
     
     public void setEvents(Set<Event> events)
     {
@@ -93,7 +91,7 @@ public class GoogleCalController
         {
             try
             {
-                model.addAttribute("title", "Calendar Events");
+                model.addAttribute("title", "Google Calendar Events");
                 model.addAttribute("calendarObjs", getCalendarEventList(code, redirectURI, model, authentication));
                 
             }
@@ -149,21 +147,10 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
-        
+        boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userEmail, "out of"));
+        System.out.println("Response " + b);
         return "login";
     }
-    
-    /*@GetMapping({"/home"})
-    public String getHome(Model model)
-    {
-        return "home";
-    }
-    
-    @GetMapping("/welcome")
-    public String welcome()
-    {
-        return "welcome";
-    }*/
     
     @Autowired
     private OAuth2AuthorizedClientService authorizedClientService;
@@ -188,9 +175,9 @@ public class GoogleCalController
                     .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
             model.addAttribute("name", userAttributes.get("name"));
-            
-            // boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userAttributes.get("email").toString()));
-            // System.out.println("Response " + b);
+            userEmail = userAttributes.get("email").toString();
+            boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userEmail, "into"));
+            System.out.println("Response " + b);
         }
     }
     

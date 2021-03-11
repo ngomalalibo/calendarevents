@@ -35,7 +35,7 @@
         }
 
         .google {
-            /*background-color: rgba(211, 220, 212, 0.4);*/
+            background-color: #0a53be;
             color: white;
         }
 
@@ -51,12 +51,12 @@
     <h2 style="text-align:center">Spring Boot Application : Calendar Event</h2>
 
     <div>
-        <a class="google btn" th:href="@{/calendar}" href="/calendar"><img th:src="@{/images/google.jpg}"
+        <!--<a class="google btn" th:href="@{/calendar}" href="/calendar"><img th:src="@{/images/google.jpg}"
                                                                            src="images/google.jpg"
-                                                                           width="200px"></a>
-        <!-- <a th:href="@{/calendar}" class="google btn">
-             <i class="fa fa-google fa-fw"></i> Sign in with Google
-         </a>-->
+                                                                           width="200px"></a>-->
+        <a th:href="@{/calendar}" class="google btn">
+            <i class="fa fa-google fa-fw"></i> Sign in with Google
+        </a>
     </div>
 </div>
 
