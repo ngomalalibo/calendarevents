@@ -14,9 +14,9 @@ import java.util.Objects;
 
 public class SendMailMailGun
 {
-    private static String MAILGUN_KEY = "874b5961af1222a0ae154e9365ab5572-aa4b0867-50c48450"; // mine
-    private static String API_BASEURL = "https://api.mailgun.net/v3/sandbox146ee31de80d4d56a0920467c2b5ea20.mailgun.org"; // mine
-    private static String DOMAIN = "sandbox146ee31de80d4d56a0920467c2b5ea20.mailgun.org";
+    private static String MAILGUN_KEY = System.getenv().get("MAILGUN_KEY");
+    private static String API_BASEURL = System.getenv().get("MAILGUN_API_BASEURL");
+    private static String DOMAIN = System.getenv().get("MAILGUN_DOMAIN");
     
     @Value("${google.mail.username}")
     static String username;
