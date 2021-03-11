@@ -12,13 +12,24 @@
     <title>Welcome to Google Calendar Events</title>
 </head>
 <body>
-<div>
-    <h1>Welcome</h1>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Sign Out"/>
-    </form>
+<div class="container-fluid">
+    <div class="row">
+        <div class="offset-4 col-sm-4 mt-5 pt-5">
 
-    <a href="#" onclick="signOut">Sign out</a>
+            <p th:text="."></p>
+            <div class="bg-light p-5 rounded-lg m-3">
+                <h1 class="display-6">Google Events Service</h1>
+                <hr class="my-4">
+
+                <form th:action="@{/logout}" method="post">
+                    <input type="submit" value="Sign Out"/>
+                </form>
+                <a href="#" onclick="signOut">Sign out</a>
+            </div>
+
+
+        </div>
+    </div>
 </div>
 <script>
     function signOut() {

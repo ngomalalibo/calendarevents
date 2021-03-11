@@ -1,13 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <meta charset="utf-8"/>
     <title>Welcome</title>
 </head>
 <body>
-<h1>Index Page</h1>
-<!--<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>-->
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="offset-4 col-sm-4 mt-5 pt-5">
+
+            <p th:text="."></p>
+            <div class="bg-light p-5 rounded-lg m-3">
+                <h1>Index Page</h1>
+                <a href="https://googleeventsapp.herokuapp.com/welcome">View Google Calendar Events</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
 </html>
