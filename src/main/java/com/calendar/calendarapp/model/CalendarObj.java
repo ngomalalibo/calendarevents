@@ -1,10 +1,11 @@
 package com.calendar.calendarapp.model;
 
-import com.google.api.client.util.DateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -20,5 +21,5 @@ public class CalendarObj
     private int endMin;
     private int duration;
     private String startEnd;
-    private DateTime eventDay;
+    private Date eventDay;
 }

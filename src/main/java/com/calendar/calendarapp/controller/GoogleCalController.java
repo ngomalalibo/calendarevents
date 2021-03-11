@@ -205,21 +205,21 @@ public class GoogleCalController
             Calendar.Events events = client.events();
             eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
             message = eventList.getItems().toString();
-            System.out.println("My: " + eventList.getItems());
+            // System.out.println("My: " + eventList.getItems());
             
             eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
             
             List<Event> items = eventList.getItems();
             
             CalendarObj calendarObj;
-            List<CalendarObj> calendarObjs = new ArrayList<CalendarObj>();
+            List<CalendarObj> calendarObjs = new ArrayList<>();
             
             for (Event event : items)
             {
                 
                 Date startDateTime = new Date(event.getStart().getDateTime().getValue());
                 Date endDateTime = new Date(event.getEnd().getDateTime().getValue());
-                DateTime eventDay = event.getStart().getDate();
+                Date eventDay = new Date(event.getStart().getDate().getValue());
                 
                 long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
                 int diffmin = (int) (diffInMillies / (60 * 1000));
@@ -246,13 +246,13 @@ public class GoogleCalController
                 
                 calendarObjs.add(calendarObj);
             }
-            System.out.println("cal message:" + message);
+            // System.out.println("cal message:" + message);
             return calendarObjs;
             
         }
         catch (Exception e)
         {
-            return new ArrayList<CalendarObj>();
+            return new ArrayList<>();
         }
     }
 }
