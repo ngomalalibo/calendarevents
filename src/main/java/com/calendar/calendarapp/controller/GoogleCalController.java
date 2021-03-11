@@ -1,6 +1,5 @@
 package com.calendar.calendarapp.controller;
 
-import com.calendar.calendarapp.email.SendMail;
 import com.calendar.calendarapp.model.CalendarObj;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
@@ -189,7 +188,7 @@ public class GoogleCalController
                     .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
             model.addAttribute("name", userAttributes.get("name"));
-    
+            
             // boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userAttributes.get("email").toString()));
             // System.out.println("Response " + b);
         }
@@ -209,7 +208,7 @@ public class GoogleCalController
             Calendar.Events events = client.events();
             eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
             message = eventList.getItems().toString();
-            // System.out.println("My: " + eventList.getItems());
+            System.out.println("My: " + eventList.getItems());
             
             eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
             
@@ -223,7 +222,6 @@ public class GoogleCalController
                 
                 Date startDateTime = new Date(event.getStart().getDateTime().getValue());
                 Date endDateTime = new Date(event.getEnd().getDateTime().getValue());
-                Date eventDay = new Date(event.getStart().getDate().getValue());
                 
                 long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
                 int diffmin = (int) (diffInMillies / (60 * 1000));
@@ -244,13 +242,12 @@ public class GoogleCalController
                 calendarObj.setEndHour(endDateTime.getHours());
                 calendarObj.setEndMin(endDateTime.getMinutes());
                 calendarObj.setDuration(diffmin);
-                calendarObj.setEventDay(eventDay);
                 
                 calendarObj.setStartEnd(sdf.format(startDateTime) + " - " + sdf.format(endDateTime));
                 
                 calendarObjs.add(calendarObj);
             }
-            // System.out.println("cal message:" + message);
+            System.out.println("cal message:" + message);
             return calendarObjs;
             
         }
