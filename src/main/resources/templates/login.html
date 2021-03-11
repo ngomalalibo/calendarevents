@@ -2,13 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id"
-          content="941770538484-tkiv05ecpmqalrrshon3ndghkdujuqh6.apps.googleusercontent.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
         * {
@@ -19,7 +16,7 @@
         .container {
             width: 50%;
             border-radius: 5px;
-            background-color: #f1f1f1;
+            background-color: #f2f2f2;
             padding: 20px 0 30px 0;
             position: fixed;
             top: 50%;
@@ -38,7 +35,7 @@
         }
 
         .google {
-            background-color: #4749ce;
+            /*background-color: rgba(211, 220, 212, 0.4);*/
             color: white;
         }
 
@@ -50,62 +47,19 @@
 
 <h2 style="text-align:center; color:red" th:utext="${message}"></h2>
 
-<div class="container bg-body">
-    <h2 style="text-align:center">Spring Boot and Google Calendar Event</h2>
+<div class="container">
+    <h2 style="text-align:center">Spring Boot Application : Calendar Event</h2>
 
-
-    <div class="btn" th:href="@{/calendar}" id="my-signin2" data-theme="dark"></div>
+    <div>
+        <a class="google btn" th:href="@{/calendar}" href="/calendar"><img th:src="@{/images/google.jpg}"
+                                                                           src="../static/images/google.jpg"
+                                                                           width="200px"></a>
+        <!-- <a th:href="@{/calendar}" class="google btn">
+             <i class="fa fa-google fa-fw"></i> Sign in with Google
+         </a>-->
+    </div>
 </div>
 
-<script>
-    function onSuccess(googleUser) {
-        console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-    }
 
-    function onFailure(error) {
-        console.log(error);
-    }
-
-    function renderButton() {
-        gapi.signin2.render('my-signin2', {
-            'scope': 'profile email',
-            'width': 240,
-            'height': 50,
-            'longtitle': true,
-            'theme': 'dark',
-            'onsuccess': onSuccess,
-            'onfailure': onFailure
-        });
-    }
-
-    function onSignIn(googleUser) {
-        // Useful data for your client-side scripts:
-        var profile = googleUser.getBasicProfile();
-        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-        console.log('Full Name: ' + profile.getName());
-        console.log('Given Name: ' + profile.getGivenName());
-        console.log('Family Name: ' + profile.getFamilyName());
-        console.log("Image URL: " + profile.getImageUrl());
-        console.log("Email: " + profile.getEmail());
-
-        // The ID token you need to pass to your backend:
-        var id_token = googleUser.getAuthResponse().id_token;
-        console.log("ID Token: " + id_token);
-        // window.location.href = 'https://googleeventsapp.herokuapp.com/welcome';
-        // document.location.href = 'https://googleeventsapp.herokuapp.com/welcome'
-        // The ID token you need to pass to your backend:
-        /*postAJAX('/server/sign-in', {id_token: id_token})
-            .then(function (user) {
-                // The user is now signed in on the server too
-                // and the user should now have a session cookie
-                // for the whole site.
-                document.location.href = '/welcome'
-                window.location.href = 'https://googleeventsapp.herokuapp.com//welcome';
-            })*/
-    }
-
-
-</script>
-<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 </body>
 </html>
