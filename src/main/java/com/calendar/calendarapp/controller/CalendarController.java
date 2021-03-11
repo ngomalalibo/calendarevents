@@ -20,7 +20,7 @@ import java.util.Map;
 public class CalendarController
 {
     
-    @GetMapping({"/", "'home"})
+    @GetMapping({"/home"})
     public String getHome(Model model)
     {
         return "home";

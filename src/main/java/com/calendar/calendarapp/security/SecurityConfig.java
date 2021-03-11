@@ -14,7 +14,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                     .antMatchers("/").permitAll()
                     .anyRequest().authenticated()
                     .and()
-                    .oauth2Login()/*.loginPage("https://googleeventsapp.herokuapp.com")*/
+                    .oauth2Login()
                     .defaultSuccessUrl("https://googleeventsapp.herokuapp.com/welcome")
                     .and().logout().logoutSuccessUrl("https://googleeventsapp.herokuapp.com");
     }
