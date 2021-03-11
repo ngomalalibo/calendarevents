@@ -68,6 +68,9 @@ public class GoogleCalController
     
     private static boolean isAuthorised = false;
     private static String userEmail;
+    private static String userName;
+    
+    SendMail sendMail = new SendMail();
     
     // final DateTime date1 = new DateTime("2017-05-05T16:30:00.000+05:30");
     final DateTime date1 = new DateTime(0);
@@ -147,7 +150,7 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
-        boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userEmail, "out of"));
+        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "out of", userName));
         System.out.println("Response " + b);
         return "login";
     }
@@ -174,10 +177,11 @@ public class GoogleCalController
             ResponseEntity<Map> response = restTemplate
                     .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
-            model.addAttribute("name", userAttributes.get("name"));
+            userName = userAttributes.get("name").toString();
+            model.addAttribute("name", userName);
             
             userEmail = userAttributes.get("email").toString();
-            boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userEmail, "into"));
+            boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "into", userName));
             System.out.println("Response " + b);
         }
     }

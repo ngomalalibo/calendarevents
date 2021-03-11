@@ -42,11 +42,12 @@ public class SendMail
         }
     }
     
-    public static ActionableEmail getMailInstance(String sentTo, String action)
+    public ActionableEmail getMailInstance(String sentTo, String action, String userName)
     {
         ActionableEmail mailObject = new ActionableEmail();
-        mailObject.setSubject("Google Calendar Events - Login Confirmation");
+        mailObject.setSubject("Google Calendar Events - Access Confirmation");
         mailObject.setToAddresses(sentTo);
+        mailObject.setPersonName(username);
         mailObject.setFromAddresses(username != null ? username : "weblibrarianapp@gmail.com");
         mailObject.setLine1(
                 "You have been logged " + action + " the google calendar events app");
@@ -56,7 +57,7 @@ public class SendMail
     }
     
     
-    public static boolean sendMailSSL(ActionableEmail actionableEmail)
+    public boolean sendMailSSL(ActionableEmail actionableEmail)
     {
         Properties properties = System.getProperties();
         properties.put("mail.smtp.host", host);
@@ -100,7 +101,7 @@ public class SendMail
     }
     
     
-    public static String getTemplate(ActionableEmail actionableEmail)
+    public String getTemplate(ActionableEmail actionableEmail)
     {
         
         return template//
@@ -111,10 +112,12 @@ public class SendMail
                        .replaceAll("##emailaddress##", CustomNullChecker.stringSafe(actionableEmail.getToAddresses()));
     }
     
-    /*public static void main(String[] args)
+    public static void main(String[] args)
     {
         SendMail sendMail = new SendMail();
-        boolean b = sendMailSSL(sendMail.getMailInstance());
+        System.out.println("Template +++++++++++++++++++++++++++++++++");
+        System.out.println(template);
+        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance("ngomalalibo@yahoo.com", "into", username));
         System.out.println("Response " + b);
-    }*/
+    }
 }
