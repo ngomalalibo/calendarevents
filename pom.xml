@@ -40,6 +40,17 @@
             <artifactId>google-api-services-gmail</artifactId>
             <version>v1-rev65-1.18.0-rc</version>
         </dependency>
+        <dependency>
+            <groupId>net.sargue</groupId>
+            <artifactId>mailgun</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+        </dependency>
+
         <!--<dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>

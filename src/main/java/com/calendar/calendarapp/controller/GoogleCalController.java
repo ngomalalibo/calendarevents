@@ -1,7 +1,8 @@
 package com.calendar.calendarapp.controller;
 
-import com.calendar.calendarapp.email.SendMail;
+import com.calendar.calendarapp.email.SendMailMailGun;
 import com.calendar.calendarapp.model.CalendarObj;
+import com.calendar.calendarapp.templates.ActionableEmail;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -69,6 +70,7 @@ public class GoogleCalController
     private static String userEmail;
     private static String userDisplayName;
     
+    SendMailMailGun sendMail = new SendMailMailGun();
     
     final DateTime date1 = new DateTime(0);
     final DateTime date2 = new DateTime(new Date());
@@ -147,11 +149,18 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
-        
-        SendMail sendMail = new SendMail();
-        boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "into", userDisplayName));
-        String msg = b ? "Message Sent Successfully" : "Message Not Sent";
-        System.out.println(msg);
+        try
+        {
+            ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
+            String temp = sendMail.getTemplate(mailInstance);
+            String msg = sendMail.sendSimpleMessage(mailInstance, temp);
+            System.out.println(msg);
+        }
+        catch (Exception e)
+        {
+            System.out.println("UnirestException " + e.getMessage());
+            e.printStackTrace();
+        }
         return "login";
     }
     
@@ -180,14 +189,23 @@ public class GoogleCalController
             userDisplayName = userAttributes.get("name").toString();
             model.addAttribute("name", userDisplayName);
             
-            SendMail sendMail = new SendMail();
             userEmail = userAttributes.get("email").toString();
             
             System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
-            boolean b = sendMail.sendMailSSL(sendMail.getMailInstance(userEmail, "into", userDisplayName));
             
-            String msg = b ? "Message Sent Successfully" : "Message Not Sent";
-            System.out.println(msg);
+            try
+            {
+                ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
+                String temp = sendMail.getTemplate(mailInstance);
+                String msg = sendMail.sendSimpleMessage(mailInstance, temp);
+                System.out.println(msg);
+            }
+            catch (Exception e)
+            {
+                System.out.println("UnirestException " + e.getMessage());
+                e.printStackTrace();
+            }
+            
         }
     }
     
