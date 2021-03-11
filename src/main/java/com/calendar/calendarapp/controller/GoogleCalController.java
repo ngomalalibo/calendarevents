@@ -175,6 +175,7 @@ public class GoogleCalController
                     .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
             model.addAttribute("name", userAttributes.get("name"));
+            
             userEmail = userAttributes.get("email").toString();
             boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userEmail, "into"));
             System.out.println("Response " + b);
@@ -184,7 +185,6 @@ public class GoogleCalController
     private List<CalendarObj> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
     {
         String message;
-        
         
         com.google.api.services.calendar.model.Events eventList;
         try
