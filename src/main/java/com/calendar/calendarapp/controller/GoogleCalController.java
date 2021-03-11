@@ -1,5 +1,6 @@
 package com.calendar.calendarapp.controller;
 
+import com.calendar.calendarapp.email.SendMail;
 import com.calendar.calendarapp.model.CalendarObj;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
@@ -188,6 +189,9 @@ public class GoogleCalController
                     .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
             model.addAttribute("name", userAttributes.get("name"));
+    
+            // boolean b = SendMail.sendMailSSL(SendMail.getMailInstance(userAttributes.get("email").toString()));
+            // System.out.println("Response " + b);
         }
     }
     
