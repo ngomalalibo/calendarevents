@@ -116,7 +116,7 @@ public class GoogleCalController
     @PostMapping("/persist")
     public String persistEvents(Model model)
     {
-    
+        
         if (isAuthorised)
         {
             try
@@ -128,13 +128,14 @@ public class GoogleCalController
                 }
                 model.addAttribute("title", "Google Calendar Events");
                 model.addAttribute("calendarObjs", calendarObjs);
-            
+                model.addAttribute("name", userDisplayName);
+                
             }
             catch (Exception e)
             {
                 model.addAttribute("calendarObjs", new ArrayList<CalendarObj>());
             }
-        
+            
             return "calendar";
         }
         else
@@ -182,6 +183,10 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
+        calendarObjs = null;
+        eventsToDisplay = null;
+        userDisplayName = null;
+        userEmail = null;
         /*try
         {
             ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
