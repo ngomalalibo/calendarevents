@@ -56,7 +56,10 @@
                 </table>
             </div>
             <div class="float-end">
-                <a class="btn btn-primary" th:href="@{/persist}" href="">Persist Events</a>
+                <form th:action="@{/persist}">
+                    <input class="btn btn-primary btn-block" type="Submit" name="Submit" value="Persist Events">
+                </form>
+                <!--                <a class="btn btn-primary" th:href="@{/persist}" href="">Persist Events</a>-->
             </div>
         </div>
     </div>
