@@ -3,6 +3,7 @@ package com.calendar.calendarapp.controller;
 import com.calendar.calendarapp.email.SendMailMailGun;
 import com.calendar.calendarapp.model.CalendarObj;
 import com.calendar.calendarapp.service.CalendarEventsService;
+import com.calendar.calendarapp.templates.ActionableEmail;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -37,7 +38,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -55,6 +55,8 @@ public class GoogleCalController
     GoogleAuthorizationCodeFlow flow;
     Credential credential;
     
+    private static boolean isCalendarSaved = false;
+    
     AuthorizationCodeRequestUrl authorizationUrl;
     
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy hh:mm a");
@@ -66,11 +68,14 @@ public class GoogleCalController
     @Value("${google.client.redirectUri}")
     private String redirectURI;
     
-    private Set<Event> events = new HashSet<>();
-    
     private static boolean isAuthorised = false;
     private static String userEmail;
     private static String userDisplayName;
+    
+    List<CalendarObj> calendarObjs = new ArrayList<>();
+    
+    @Autowired
+    private CalendarEventsService service;
     
     
     SendMailMailGun sendMail = new SendMailMailGun();
@@ -78,17 +83,12 @@ public class GoogleCalController
     final DateTime date1 = new DateTime(0);
     final DateTime date2 = new DateTime(new Date());
     
-    public void setEvents(Set<Event> events)
-    {
-        this.events = events;
-    }
-    
     @GetMapping(value = "/calendar")
     public RedirectView googleConnectionStatus(HttpServletRequest request) throws Exception
     {
         if (!isAuthorised)
         {
-            return new RedirectView(authorize(redirectURI));
+            return new RedirectView(authorizeApp(redirectURI));
         }
         else
         {
@@ -104,9 +104,13 @@ public class GoogleCalController
             try
             {
                 List<CalendarObj> calendarEventList = getCalendarEventList(code, redirectURI, model, authentication);
-                model.addAttribute("title", "Google Calendar Events");
+                model.addAttribute("title", "Your Google Calendar Events");
                 model.addAttribute("calendarObjs", calendarEventList);
-                System.out.println(service.saveAll(calendarEventList));
+                if (!isCalendarSaved)
+                {
+                    System.out.println(service.saveAll(calendarEventList));
+                    isCalendarSaved = true;
+                }
             }
             catch (Exception e)
             {
@@ -121,8 +125,167 @@ public class GoogleCalController
         }
     }
     
+    private String authorizeApp(String redirectURL) throws Exception
+    {
+        
+        if (flow == null)
+        {
+            GoogleClientSecrets.Details web = new GoogleClientSecrets.Details();
+            web.setClientId(clientId);
+            web.setClientSecret(clientSecret);
+            clientSecrets = new GoogleClientSecrets().setWeb(web);
+            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
+                                                           Collections.singleton(CalendarScopes.CALENDAR)).build();
+        }
+        authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectURL);
+        
+        isAuthorised = true;
+        
+        return authorizationUrl.build();
+    }
+    
     @Autowired
-    CalendarEventsService service;
+    private OAuth2AuthorizedClientService authorizedClientService;
+    
+    private List<CalendarObj> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
+    {
+        com.google.api.services.calendar.model.Events eventList;
+        try
+        {
+            
+            //
+            TokenResponse tokenResponse = flow.newTokenRequest(calenderApiCode).setRedirectUri(redirectURL).execute();
+            credential = flow.createAndStoreCredential(tokenResponse, "userID");
+            client = new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
+            Calendar.Events events = client.events();
+            eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
+            
+            OAuth2AuthorizedClient client = authorizedClientService
+                    .loadAuthorizedClient(
+                            authentication.getAuthorizedClientRegistrationId(),
+                            authentication.getName());
+            String userInfoEndpointUri = client.getClientRegistration()
+                                               .getProviderDetails().getUserInfoEndpoint().getUri();
+            
+            if (!StringUtils.isEmpty(userInfoEndpointUri))
+            {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
+                                                                         .getTokenValue());
+                HttpEntity entity = new HttpEntity("", headers);
+                ResponseEntity<Map> response = restTemplate
+                        .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
+                Map userAttributes = response.getBody();
+                userDisplayName = userAttributes.get("name").toString();
+                model.addAttribute("name", userDisplayName);
+                
+                userEmail = userAttributes.get("email").toString();
+                
+                System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
+                
+                
+            }
+            
+            eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
+            
+            List<Event> items = eventList.getItems();
+            
+            CalendarObj calendarObj;
+            
+            calendarObjs = new ArrayList<>();
+            
+            for (Event event : items)
+            {
+                Date startDateTime = new Date(event.getStart().getDateTime().getValue());
+                Date endDateTime = new Date(event.getEnd().getDateTime().getValue());
+                
+                long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
+                int diffmin = (int) (diffInMillies / (60 * 1000));
+                
+                calendarObj = new CalendarObj();
+                
+                if (event.getSummary() != null && event.getSummary().length() > 0)
+                {
+                    calendarObj.setTitle(event.getSummary());
+                }
+                else
+                {
+                    calendarObj.setTitle("No Title");
+                }
+                
+                calendarObj.setStartHour(startDateTime.getHours());
+                calendarObj.setStartMin(startDateTime.getMinutes());
+                calendarObj.setEndHour(endDateTime.getHours());
+                calendarObj.setEndMin(endDateTime.getMinutes());
+                calendarObj.setDuration(diffmin);
+                
+                calendarObj.setStartEnd(sdf.format(startDateTime) + " - " + sdf.format(endDateTime));
+                
+                calendarObjs.add(calendarObj);
+            }
+            
+            /*ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
+            String temp = sendMail.getTemplate(mailInstance);
+            String msg = sendMail.sendSimpleMessage(mailInstance, temp);
+            System.out.println(msg);*/
+            
+            return calendarObjs;
+            
+        }
+        catch (Exception e)
+        {
+            return new ArrayList<>();
+        }
+    }
+    
+   
+    
+    /*public void getLoginInfo(Model model, OAuth2AuthenticationToken authentication)
+    {
+        OAuth2AuthorizedClient client = authorizedClientService
+                .loadAuthorizedClient(
+                        authentication.getAuthorizedClientRegistrationId(),
+                        authentication.getName());
+        String userInfoEndpointUri = client.getClientRegistration()
+                                           .getProviderDetails().getUserInfoEndpoint().getUri();
+    
+        if (!StringUtils.isEmpty(userInfoEndpointUri))
+        {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
+                                                                     .getTokenValue());
+            HttpEntity entity = new HttpEntity("", headers);
+            ResponseEntity<Map> response = restTemplate
+                    .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
+            Map userAttributes = response.getBody();
+            userDisplayName = userAttributes.get("name").toString();
+            model.addAttribute("name", userDisplayName);
+        
+            userEmail = userAttributes.get("email").toString();
+        
+            System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
+            
+            *//*try
+            {
+                ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
+                String temp = sendMail.getTemplate(mailInstance);
+                String msg = sendMail.sendSimpleMessage(mailInstance, temp);
+                System.out.println(msg);
+            }
+            catch (Exception e)
+            {
+                System.out.println("UnirestException " + e.getMessage());
+                e.printStackTrace();
+            }*//*
+        
+        }
+    }*/
+    
+    
+   
     
     /*@PostMapping("/persist")
     public String persistEvents(Model model)
@@ -155,102 +318,6 @@ public class GoogleCalController
         }
     }*/
     
-    @GetMapping(value = "/error")
-    public String accessDenied(Model model)
-    {
-        
-        model.addAttribute("message", "Not authorised.");
-        return "login";
-        
-    }
-    
-    public Set<Event> getEvents() throws IOException
-    {
-        return this.events;
-    }
-    
-    List<CalendarObj> calendarObjs = new ArrayList<>();
-    
-    private List<CalendarObj> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
-    {
-        com.google.api.services.calendar.model.Events eventList;
-        try
-        {
-            //OAuth2AuthenticationToken
-            TokenResponse response = flow.newTokenRequest(calenderApiCode).setRedirectUri(redirectURL).execute();
-            credential = flow.createAndStoreCredential(response, "userID");
-            client = new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
-            Calendar.Events events = client.events();
-            eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
-            // message = eventList.getItems().toString();
-            // System.out.println("My: " + eventList.getItems());
-            
-            getLoginInfo(model, authentication);
-            
-            eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
-            
-            List<Event> items = eventList.getItems();
-            
-            CalendarObj calendarObj;
-            
-            for (Event event : items)
-            {
-                Date startDateTime = new Date(event.getStart().getDateTime().getValue());
-                Date endDateTime = new Date(event.getEnd().getDateTime().getValue());
-                
-                long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
-                int diffmin = (int) (diffInMillies / (60 * 1000));
-                
-                calendarObj = new CalendarObj();
-                
-                if (event.getSummary() != null && event.getSummary().length() > 0)
-                {
-                    calendarObj.setTitle(event.getSummary());
-                }
-                else
-                {
-                    calendarObj.setTitle("No Title");
-                }
-                
-                calendarObj.setStartHour(startDateTime.getHours());
-                calendarObj.setStartMin(startDateTime.getMinutes());
-                calendarObj.setEndHour(endDateTime.getHours());
-                calendarObj.setEndMin(endDateTime.getMinutes());
-                calendarObj.setDuration(diffmin);
-                
-                calendarObj.setStartEnd(sdf.format(startDateTime) + " - " + sdf.format(endDateTime));
-                
-                calendarObjs.add(calendarObj);
-            }
-            return calendarObjs;
-            
-        }
-        catch (Exception e)
-        {
-            return new ArrayList<>();
-        }
-    }
-    
-    private String authorize(String redirectURL) throws Exception
-    {
-        
-        if (flow == null)
-        {
-            GoogleClientSecrets.Details web = new GoogleClientSecrets.Details();
-            web.setClientId(clientId);
-            web.setClientSecret(clientSecret);
-            clientSecrets = new GoogleClientSecrets().setWeb(web);
-            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets,
-                                                           Collections.singleton(CalendarScopes.CALENDAR)).build();
-        }
-        authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectURL);
-        
-        isAuthorised = true;
-        
-        return authorizationUrl.build();
-    }
-    
     
     @GetMapping(value = {"/", "/login", "/logout"})
     public String login(Model model)
@@ -271,49 +338,14 @@ public class GoogleCalController
         return "login";
     }
     
-    @Autowired
-    private OAuth2AuthorizedClientService authorizedClientService;
     
-    public void getLoginInfo(Model model, OAuth2AuthenticationToken authentication)
+    @GetMapping(value = "/error")
+    public String accessDenied(Model model)
     {
-        OAuth2AuthorizedClient client = authorizedClientService
-                .loadAuthorizedClient(
-                        authentication.getAuthorizedClientRegistrationId(),
-                        authentication.getName());
-        String userInfoEndpointUri = client.getClientRegistration()
-                                           .getProviderDetails().getUserInfoEndpoint().getUri();
         
-        if (!StringUtils.isEmpty(userInfoEndpointUri))
-        {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
-                                                                     .getTokenValue());
-            HttpEntity entity = new HttpEntity("", headers);
-            ResponseEntity<Map> response = restTemplate
-                    .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
-            Map userAttributes = response.getBody();
-            userDisplayName = userAttributes.get("name").toString();
-            model.addAttribute("name", userDisplayName);
-            
-            userEmail = userAttributes.get("email").toString();
-            
-            System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
-            
-            /*try
-            {
-                ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
-                String temp = sendMail.getTemplate(mailInstance);
-                String msg = sendMail.sendSimpleMessage(mailInstance, temp);
-                System.out.println(msg);
-            }
-            catch (Exception e)
-            {
-                System.out.println("UnirestException " + e.getMessage());
-                e.printStackTrace();
-            }*/
-            
-        }
+        model.addAttribute("message", "Not authorised.");
+        return "error";
+        
     }
     
     
