@@ -113,10 +113,13 @@ public class GoogleCalController
     CalendarEventsService service;
     
     @PostMapping("/persist")
-    public String persistEvents(List<CalendarObj> events, Model model)
+    public String persistEvents(Model model)
     {
-        model.addAttribute("message", service.saveAll(events));
-        service.findAll().forEach(System.out::println);
+        if (calendarObjs != null && calendarObjs.size() > 0)
+        {
+            model.addAttribute("message", service.saveAll(calendarObjs));
+            service.findAll().forEach(System.out::println);
+        }
         return "/calendar";
     }
     
