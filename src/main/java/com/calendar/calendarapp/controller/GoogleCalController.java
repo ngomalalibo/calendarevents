@@ -184,8 +184,6 @@ public class GoogleCalController
                 userEmail = userAttributes.get("email").toString();
                 
                 System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
-                
-                
             }
             
             eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
@@ -240,90 +238,11 @@ public class GoogleCalController
         }
     }
     
-   
-    
-    /*public void getLoginInfo(Model model, OAuth2AuthenticationToken authentication)
-    {
-        OAuth2AuthorizedClient client = authorizedClientService
-                .loadAuthorizedClient(
-                        authentication.getAuthorizedClientRegistrationId(),
-                        authentication.getName());
-        String userInfoEndpointUri = client.getClientRegistration()
-                                           .getProviderDetails().getUserInfoEndpoint().getUri();
-    
-        if (!StringUtils.isEmpty(userInfoEndpointUri))
-        {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
-                                                                     .getTokenValue());
-            HttpEntity entity = new HttpEntity("", headers);
-            ResponseEntity<Map> response = restTemplate
-                    .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
-            Map userAttributes = response.getBody();
-            userDisplayName = userAttributes.get("name").toString();
-            model.addAttribute("name", userDisplayName);
-        
-            userEmail = userAttributes.get("email").toString();
-        
-            System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
-            
-            *//*try
-            {
-                ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
-                String temp = sendMail.getTemplate(mailInstance);
-                String msg = sendMail.sendSimpleMessage(mailInstance, temp);
-                System.out.println(msg);
-            }
-            catch (Exception e)
-            {
-                System.out.println("UnirestException " + e.getMessage());
-                e.printStackTrace();
-            }*//*
-        
-        }
-    }*/
-    
-    
-   
-    
-    /*@PostMapping("/persist")
-    public String persistEvents(Model model)
-    {
-        
-        if (isAuthorised)
-        {
-            try
-            {
-                if (eventsToDisplay != null && eventsToDisplay.size() > 0)
-                {
-                    model.addAttribute("message", service.saveAll(eventsToDisplay));
-                    service.findAll().forEach(System.out::println);
-                }
-                model.addAttribute("title", "Your Google Calendar Events");
-                model.addAttribute("calendarObjs", eventsToDisplay);
-                model.addAttribute("name", userDisplayName);
-                
-            }
-            catch (Exception e)
-            {
-                model.addAttribute("calendarObjs", new ArrayList<CalendarObj>());
-            }
-            
-            return "calendar";
-        }
-        else
-        {
-            return "/";
-        }
-    }*/
-    
-    
     @GetMapping(value = {"/", "/login", "/logout"})
     public String login(Model model)
     {
         isAuthorised = false;
-        /*try
+        try
         {
             ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
             String temp = sendMail.getTemplate(mailInstance);
@@ -334,10 +253,9 @@ public class GoogleCalController
         {
             System.out.println("UnirestException " + e.getMessage());
             e.printStackTrace();
-        }*/
+        }
         return "login";
     }
-    
     
     @GetMapping(value = "/error")
     public String accessDenied(Model model)
@@ -347,6 +265,4 @@ public class GoogleCalController
         return "error";
         
     }
-    
-    
 }
