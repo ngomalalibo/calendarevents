@@ -64,6 +64,7 @@ public class GoogleCalController
     private Set<Event> events = new HashSet<>();
     
     List<CalendarObj> eventsToDisplay = new ArrayList<>();
+    List<CalendarObj> calendarObjs = new ArrayList<>();
     
     private static boolean isAuthorised = false;
     private static String userEmail;
@@ -115,15 +116,16 @@ public class GoogleCalController
     @PostMapping("/persist")
     public String persistEvents(Model model)
     {
-        if (eventsToDisplay != null && eventsToDisplay.size() > 0)
-        {
-            model.addAttribute("message", service.saveAll(eventsToDisplay));
-            service.findAll().forEach(System.out::println);
-        }
-        /*if (isAuthorised)
+    
+        if (isAuthorised)
         {
             try
             {
+                if (eventsToDisplay != null && eventsToDisplay.size() > 0)
+                {
+                    model.addAttribute("message", service.saveAll(eventsToDisplay));
+                    service.findAll().forEach(System.out::println);
+                }
                 model.addAttribute("title", "Google Calendar Events");
                 model.addAttribute("calendarObjs", calendarObjs);
             
@@ -138,8 +140,7 @@ public class GoogleCalController
         else
         {
             return "/";
-        }*/
-        return "calendar";
+        }
     }
     
     @GetMapping(value = "/error")
@@ -265,7 +266,7 @@ public class GoogleCalController
             
             CalendarObj calendarObj;
             
-            List<CalendarObj> calendarObjs = new ArrayList<>();
+            
             for (Event event : items)
             {
                 
