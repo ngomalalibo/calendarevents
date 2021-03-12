@@ -2,7 +2,7 @@ package com.calendar.calendarapp.controller;
 
 import com.calendar.calendarapp.email.SendMailMailGun;
 import com.calendar.calendarapp.model.CalendarObj;
-import com.calendar.calendarapp.templates.ActionableEmail;
+import com.calendar.calendarapp.service.CalendarEventsService;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -29,10 +29,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -65,6 +62,8 @@ public class GoogleCalController
     private String redirectURI;
     
     private Set<Event> events = new HashSet<>();
+    
+    List<CalendarObj> calendarObjs = new ArrayList<>();
     
     private static boolean isAuthorised = false;
     private static String userEmail;
@@ -110,6 +109,17 @@ public class GoogleCalController
         }
     }
     
+    @Autowired
+    CalendarEventsService service;
+    
+    @PostMapping("/persist")
+    public String persistEvents(List<CalendarObj> events, Model model)
+    {
+        model.addAttribute("message", service.saveAll(events));
+        service.findAll().forEach(System.out::println);
+        return "/calendar";
+    }
+    
     @GetMapping(value = "/error")
     public String accessDenied(Model model)
     {
@@ -149,7 +159,7 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
-        try
+        /*try
         {
             ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
             String temp = sendMail.getTemplate(mailInstance);
@@ -160,7 +170,7 @@ public class GoogleCalController
         {
             System.out.println("UnirestException " + e.getMessage());
             e.printStackTrace();
-        }
+        }*/
         return "login";
     }
     
@@ -193,7 +203,7 @@ public class GoogleCalController
             
             System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
             
-            try
+            /*try
             {
                 ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
                 String temp = sendMail.getTemplate(mailInstance);
@@ -204,7 +214,7 @@ public class GoogleCalController
             {
                 System.out.println("UnirestException " + e.getMessage());
                 e.printStackTrace();
-            }
+            }*/
             
         }
     }
@@ -232,7 +242,7 @@ public class GoogleCalController
             List<Event> items = eventList.getItems();
             
             CalendarObj calendarObj;
-            List<CalendarObj> calendarObjs = new ArrayList<>();
+            
             
             for (Event event : items)
             {
@@ -265,6 +275,7 @@ public class GoogleCalController
                 calendarObjs.add(calendarObj);
             }
             // System.out.println("cal message:" + message);
+            
             return calendarObjs;
             
         }
