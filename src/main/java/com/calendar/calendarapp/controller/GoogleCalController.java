@@ -183,10 +183,6 @@ public class GoogleCalController
     public String login(Model model)
     {
         isAuthorised = false;
-        calendarObjs = null;
-        eventsToDisplay = null;
-        userDisplayName = null;
-        userEmail = null;
         /*try
         {
             ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
