@@ -63,9 +63,6 @@ public class GoogleCalController
     
     private Set<Event> events = new HashSet<>();
     
-    List<CalendarObj> eventsToDisplay = new ArrayList<>();
-    
-    
     private static boolean isAuthorised = false;
     private static String userEmail;
     private static String userDisplayName;
@@ -93,9 +90,10 @@ public class GoogleCalController
         {
             try
             {
+                List<CalendarObj> calendarEventList = getCalendarEventList(code, redirectURI, model, authentication);
                 model.addAttribute("title", "Google Calendar Events");
-                model.addAttribute("calendarObjs", getCalendarEventList(code, redirectURI, model, authentication));
-                
+                model.addAttribute("calendarObjs", calendarEventList);
+                System.out.println(service.saveAll(calendarEventList));
             }
             catch (Exception e)
             {
@@ -113,7 +111,7 @@ public class GoogleCalController
     @Autowired
     CalendarEventsService service;
     
-    @PostMapping("/persist")
+    /*@PostMapping("/persist")
     public String persistEvents(Model model)
     {
         
@@ -142,7 +140,7 @@ public class GoogleCalController
         {
             return "/";
         }
-    }
+    }*/
     
     @GetMapping(value = "/error")
     public String accessDenied(Model model)
@@ -268,7 +266,6 @@ public class GoogleCalController
             CalendarObj calendarObj;
     
             List<CalendarObj> calendarObjs = new ArrayList<>();
-            eventsToDisplay = calendarObjs;
             for (Event event : items)
             {
                 
@@ -300,7 +297,6 @@ public class GoogleCalController
                 calendarObjs.add(calendarObj);
             }
             // System.out.println("cal message:" + message);
-            eventsToDisplay = calendarObjs;
             return calendarObjs;
             
         }
