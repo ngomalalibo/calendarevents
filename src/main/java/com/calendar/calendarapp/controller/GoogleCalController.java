@@ -29,7 +29,10 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -52,6 +55,8 @@ public class GoogleCalController
     GoogleAuthorizationCodeFlow flow;
     Credential credential;
     
+    AuthorizationCodeRequestUrl authorizationUrl;
+    
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy hh:mm a");
     
     @Value("${google.client.client-id}")
@@ -67,6 +72,7 @@ public class GoogleCalController
     private static String userEmail;
     private static String userDisplayName;
     
+    
     SendMailMailGun sendMail = new SendMailMailGun();
     
     final DateTime date1 = new DateTime(0);
@@ -80,7 +86,14 @@ public class GoogleCalController
     @GetMapping(value = "/calendar")
     public RedirectView googleConnectionStatus(HttpServletRequest request) throws Exception
     {
-        return new RedirectView(authorize(redirectURI));
+        if (!isAuthorised)
+        {
+            return new RedirectView(authorize(redirectURI));
+        }
+        else
+        {
+            return new RedirectView(authorizationUrl.build());
+        }
     }
     
     @RequestMapping(value = "/calendar", method = RequestMethod.GET, params = "code")
@@ -158,7 +171,7 @@ public class GoogleCalController
     
     private String authorize(String redirectURL) throws Exception
     {
-        AuthorizationCodeRequestUrl authorizationUrl;
+        
         if (flow == null)
         {
             GoogleClientSecrets.Details web = new GoogleClientSecrets.Details();
@@ -264,7 +277,7 @@ public class GoogleCalController
             List<Event> items = eventList.getItems();
             
             CalendarObj calendarObj;
-    
+            
             List<CalendarObj> calendarObjs = new ArrayList<>();
             for (Event event : items)
             {
