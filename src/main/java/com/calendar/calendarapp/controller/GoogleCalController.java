@@ -120,7 +120,26 @@ public class GoogleCalController
             model.addAttribute("message", service.saveAll(calendarObjs));
             service.findAll().forEach(System.out::println);
         }
-        return "/calendar";
+        /*if (isAuthorised)
+        {
+            try
+            {
+                model.addAttribute("title", "Google Calendar Events");
+                model.addAttribute("calendarObjs", calendarObjs);
+            
+            }
+            catch (Exception e)
+            {
+                model.addAttribute("calendarObjs", new ArrayList<CalendarObj>());
+            }
+        
+            return "calendar";
+        }
+        else
+        {
+            return "/";
+        }*/
+        return "redirect:/calendar";
     }
     
     @GetMapping(value = "/error")
