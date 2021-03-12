@@ -169,6 +169,68 @@ public class GoogleCalController
         return this.events;
     }
     
+    List<CalendarObj> calendarObjs = new ArrayList<>();
+    
+    private List<CalendarObj> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
+    {
+        com.google.api.services.calendar.model.Events eventList;
+        try
+        {
+            //OAuth2AuthenticationToken
+            TokenResponse response = flow.newTokenRequest(calenderApiCode).setRedirectUri(redirectURL).execute();
+            credential = flow.createAndStoreCredential(response, "userID");
+            client = new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
+            Calendar.Events events = client.events();
+            eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
+            // message = eventList.getItems().toString();
+            // System.out.println("My: " + eventList.getItems());
+            
+            getLoginInfo(model, authentication);
+            
+            eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
+            
+            List<Event> items = eventList.getItems();
+            
+            CalendarObj calendarObj;
+            
+            for (Event event : items)
+            {
+                Date startDateTime = new Date(event.getStart().getDateTime().getValue());
+                Date endDateTime = new Date(event.getEnd().getDateTime().getValue());
+                
+                long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
+                int diffmin = (int) (diffInMillies / (60 * 1000));
+                
+                calendarObj = new CalendarObj();
+                
+                if (event.getSummary() != null && event.getSummary().length() > 0)
+                {
+                    calendarObj.setTitle(event.getSummary());
+                }
+                else
+                {
+                    calendarObj.setTitle("No Title");
+                }
+                
+                calendarObj.setStartHour(startDateTime.getHours());
+                calendarObj.setStartMin(startDateTime.getMinutes());
+                calendarObj.setEndHour(endDateTime.getHours());
+                calendarObj.setEndMin(endDateTime.getMinutes());
+                calendarObj.setDuration(diffmin);
+                
+                calendarObj.setStartEnd(sdf.format(startDateTime) + " - " + sdf.format(endDateTime));
+                
+                calendarObjs.add(calendarObj);
+            }
+            return calendarObjs;
+            
+        }
+        catch (Exception e)
+        {
+            return new ArrayList<>();
+        }
+    }
+    
     private String authorize(String redirectURL) throws Exception
     {
         
@@ -254,71 +316,5 @@ public class GoogleCalController
         }
     }
     
-    List<CalendarObj> calendarObjs = new ArrayList<>();
     
-    private List<CalendarObj> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
-    {
-        String message;
-        
-        com.google.api.services.calendar.model.Events eventList;
-        try
-        {
-            
-            if (!isAuthorised)
-            {
-                //OAuth2AuthenticationToken
-                TokenResponse response = flow.newTokenRequest(calenderApiCode).setRedirectUri(redirectURL).execute();
-                credential = flow.createAndStoreCredential(response, "userID");
-                client = new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
-                Calendar.Events events = client.events();
-                eventList = events.list("primary").setTimeMin(date1).setTimeMax(date2).execute();
-                message = eventList.getItems().toString();
-                // System.out.println("My: " + eventList.getItems());
-                
-                getLoginInfo(model, authentication);
-                
-                eventList = events.list("primary").setSingleEvents(true).setTimeMin(date1).setTimeMax(date2).setOrderBy("startTime").execute();
-                
-                List<Event> items = eventList.getItems();
-                
-                CalendarObj calendarObj;
-                
-                for (Event event : items)
-                {
-                    Date startDateTime = new Date(event.getStart().getDateTime().getValue());
-                    Date endDateTime = new Date(event.getEnd().getDateTime().getValue());
-                    
-                    long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
-                    int diffmin = (int) (diffInMillies / (60 * 1000));
-                    
-                    calendarObj = new CalendarObj();
-                    
-                    if (event.getSummary() != null && event.getSummary().length() > 0)
-                    {
-                        calendarObj.setTitle(event.getSummary());
-                    }
-                    else
-                    {
-                        calendarObj.setTitle("No Title");
-                    }
-                    
-                    calendarObj.setStartHour(startDateTime.getHours());
-                    calendarObj.setStartMin(startDateTime.getMinutes());
-                    calendarObj.setEndHour(endDateTime.getHours());
-                    calendarObj.setEndMin(endDateTime.getMinutes());
-                    calendarObj.setDuration(diffmin);
-                    
-                    calendarObj.setStartEnd(sdf.format(startDateTime) + " - " + sdf.format(endDateTime));
-                    
-                    calendarObjs.add(calendarObj);
-                }
-            }
-            return calendarObjs;
-            
-        }
-        catch (Exception e)
-        {
-            return new ArrayList<>();
-        }
-    }
 }
