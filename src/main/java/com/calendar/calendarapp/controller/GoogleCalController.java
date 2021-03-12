@@ -64,7 +64,7 @@ public class GoogleCalController
     private Set<Event> events = new HashSet<>();
     
     List<CalendarObj> eventsToDisplay = new ArrayList<>();
-    List<CalendarObj> calendarObjs = new ArrayList<>();
+    
     
     private static boolean isAuthorised = false;
     private static String userEmail;
@@ -126,8 +126,8 @@ public class GoogleCalController
                     model.addAttribute("message", service.saveAll(eventsToDisplay));
                     service.findAll().forEach(System.out::println);
                 }
-                model.addAttribute("title", "Google Calendar Events");
-                model.addAttribute("calendarObjs", calendarObjs);
+                model.addAttribute("title", "Your Google Calendar Events");
+                model.addAttribute("calendarObjs", eventsToDisplay);
                 model.addAttribute("name", userDisplayName);
                 
             }
@@ -266,8 +266,9 @@ public class GoogleCalController
             List<Event> items = eventList.getItems();
             
             CalendarObj calendarObj;
-            
-            
+    
+            List<CalendarObj> calendarObjs = new ArrayList<>();
+            eventsToDisplay = calendarObjs;
             for (Event event : items)
             {
                 
