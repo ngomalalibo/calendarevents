@@ -25,10 +25,13 @@
                     <a class="nav-link" th:href="@{/logout}">Logout <span class="sr-only">(current)</span></a>
                 </li>-->
             </ul>
-            <form class="form-inline my-2 my-lg-0 d-inline-flex">
+            <!--<form class="form-inline my-2 my-lg-0 d-inline-flex">
                 <a class="nav-link btn btn-outline-primary" th:href="@{/logout}">Logout <span
                         class="sr-only">(current user)</span></a>
-                <!--                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>-->
+                &lt;!&ndash;                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>&ndash;&gt;
+            </form>-->
+            <form th:action="@{/logout}" method="post">
+                <input class="nav-link btn btn-outline-primary" type="submit" value="Logout (current user)"/>
             </form>
         </div>
     </nav>
