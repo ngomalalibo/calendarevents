@@ -51,8 +51,6 @@ public class GoogleCalController
     GoogleAuthorizationCodeFlow flow;
     Credential credential;
     
-    private static boolean isCalendarSaved = false;
-    
     AuthorizationCodeRequestUrl authorizationUrl;
     
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy hh:mm a");
@@ -87,7 +85,6 @@ public class GoogleCalController
         clientSecrets = null;
         flow = null;
         credential = null;
-        isCalendarSaved = false;
         
         return "";
     }
@@ -115,11 +112,7 @@ public class GoogleCalController
                 List<CalendarEvent> calendarEventList = getCalendarEventList(code, redirectURI, model, authentication);
                 model.addAttribute("title", "Your Google Calendar Events");
                 model.addAttribute("calendarObjs", calendarEventList);
-                if (!isCalendarSaved)
-                {
-                    System.out.println(service.saveAll(calendarEventList));
-                    isCalendarSaved = true;
-                }
+                System.out.println(service.saveAll(calendarEventList));
             }
             catch (Exception e)
             {
