@@ -30,10 +30,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -122,7 +119,7 @@ public class GoogleCalController
         }
         else
         {
-            return "/";
+            return "";
         }
     }
     
@@ -239,16 +236,24 @@ public class GoogleCalController
         }
     }
     
-    /*@PostMapping("/logout")
+    @PostMapping("/logout")
     public String logout()
     {
-    
-    }*/
+        authorizationUrl = null;
+        isAuthorised = false;
+        clientSecrets = null;
+        flow = null;
+        credential = null;
+        isCalendarSaved = false;
+        
+        
+        return "/";
+    }
     
     @GetMapping(value = {"/", "/login"})
     public String login(Model model)
     {
-        isAuthorised = false;
+        
         try
         {
             ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
