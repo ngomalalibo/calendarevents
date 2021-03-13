@@ -30,7 +30,10 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -83,14 +86,15 @@ public class GoogleCalController
     @GetMapping(value = "/calendar")
     public RedirectView googleConnectionStatus(HttpServletRequest request) throws Exception
     {
-        if (!isAuthorised)
+        return new RedirectView(authorizeApp(redirectURI));
+        /*if (!isAuthorised)
         {
             return new RedirectView(authorizeApp(redirectURI));
         }
         else
         {
             return new RedirectView(authorizationUrl.build());
-        }
+        }*/
     }
     
     @RequestMapping(value = "/calendar", method = RequestMethod.GET, params = "code")
