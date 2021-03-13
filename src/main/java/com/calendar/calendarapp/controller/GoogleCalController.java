@@ -3,6 +3,7 @@ package com.calendar.calendarapp.controller;
 import com.calendar.calendarapp.email.SendMailMailGun;
 import com.calendar.calendarapp.model.CalendarEvent;
 import com.calendar.calendarapp.service.CalendarEventsService;
+import com.calendar.calendarapp.templates.ActionableEmail;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -85,7 +86,18 @@ public class GoogleCalController
         clientSecrets = null;
         flow = null;
         credential = null;
-        
+        try
+        {
+            ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
+            String temp = sendMail.getTemplate(mailInstance);
+            String msg = sendMail.sendSimpleMessage(mailInstance, temp);
+            System.out.println(msg);
+        }
+        catch (Exception e)
+        {
+            System.out.println("UnirestException " + e.getMessage());
+            e.printStackTrace();
+        }
         return "";
     }
     
@@ -226,10 +238,10 @@ public class GoogleCalController
                 calendarObjs.add(calendarObj);
             }
             
-            /*ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
+            ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
             String temp = sendMail.getTemplate(mailInstance);
             String msg = sendMail.sendSimpleMessage(mailInstance, temp);
-            System.out.println(msg);*/
+            System.out.println(msg);
             
             return calendarObjs;
             
@@ -245,18 +257,7 @@ public class GoogleCalController
     public String login(Model model)
     {
         
-        try
-        {
-            /*ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
-            String temp = sendMail.getTemplate(mailInstance);
-            String msg = sendMail.sendSimpleMessage(mailInstance, temp);
-            System.out.println(msg);*/
-        }
-        catch (Exception e)
-        {
-            System.out.println("UnirestException " + e.getMessage());
-            e.printStackTrace();
-        }
+        
         return "login";
     }
     

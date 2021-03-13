@@ -11,5 +11,4 @@ public class ActionableEmail
     private String personName;
     private String subject;
     private String line1;
-    
 }
