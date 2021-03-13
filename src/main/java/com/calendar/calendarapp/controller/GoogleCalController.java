@@ -3,7 +3,6 @@ package com.calendar.calendarapp.controller;
 import com.calendar.calendarapp.email.SendMailMailGun;
 import com.calendar.calendarapp.model.CalendarObj;
 import com.calendar.calendarapp.service.CalendarEventsService;
-import com.calendar.calendarapp.templates.ActionableEmail;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -97,7 +96,7 @@ public class GoogleCalController
     @RequestMapping(value = "/calendar", method = RequestMethod.GET, params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, Model model, OAuth2AuthenticationToken authentication)
     {
-        if (isAuthorised && userDisplayName != null)
+        if (isAuthorised)
         {
             try
             {
@@ -255,10 +254,10 @@ public class GoogleCalController
         
         try
         {
-            ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
+            /*ActionableEmail mailInstance = sendMail.getMailInstance(userEmail, "into", userDisplayName);
             String temp = sendMail.getTemplate(mailInstance);
             String msg = sendMail.sendSimpleMessage(mailInstance, temp);
-            System.out.println(msg);
+            System.out.println(msg);*/
         }
         catch (Exception e)
         {
