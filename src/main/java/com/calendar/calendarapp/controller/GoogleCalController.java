@@ -79,6 +79,19 @@ public class GoogleCalController
     final DateTime date1 = new DateTime(0);
     final DateTime date2 = new DateTime(new Date());
     
+    @PostMapping("/logout")
+    public String logout()
+    {
+        authorizationUrl = null;
+        isAuthorised = false;
+        clientSecrets = null;
+        flow = null;
+        credential = null;
+        isCalendarSaved = false;
+        
+        return "";
+    }
+    
     @GetMapping(value = "/calendar")
     public RedirectView googleConnectionStatus(HttpServletRequest request) throws Exception
     {
@@ -234,18 +247,6 @@ public class GoogleCalController
         }
     }
     
-    @PostMapping("/logout")
-    public String logout()
-    {
-        authorizationUrl = null;
-        isAuthorised = false;
-        clientSecrets = null;
-        flow = null;
-        credential = null;
-        isCalendarSaved = false;
-        
-        return "";
-    }
     
     @GetMapping(value = {"/", "/login"})
     public String login(Model model)
