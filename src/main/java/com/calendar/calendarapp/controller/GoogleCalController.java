@@ -82,15 +82,14 @@ public class GoogleCalController
     @GetMapping(value = "/calendar")
     public RedirectView googleConnectionStatus(HttpServletRequest request) throws Exception
     {
-        return new RedirectView(authorizeApp(redirectURI));
-        /*if (!isAuthorised)
+        if (!isAuthorised)
         {
             return new RedirectView(authorizeApp(redirectURI));
         }
         else
         {
             return new RedirectView(authorizationUrl.build());
-        }*/
+        }
     }
     
     @RequestMapping(value = "/calendar", method = RequestMethod.GET, params = "code")
