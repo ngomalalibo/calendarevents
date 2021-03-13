@@ -97,7 +97,7 @@ public class GoogleCalController
     @RequestMapping(value = "/calendar", method = RequestMethod.GET, params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, Model model, OAuth2AuthenticationToken authentication)
     {
-        if (isAuthorised)
+        if (isAuthorised && userDisplayName != null)
         {
             try
             {
@@ -119,7 +119,7 @@ public class GoogleCalController
         }
         else
         {
-            return "";
+            return "redirect:/";
         }
     }
     
@@ -246,8 +246,7 @@ public class GoogleCalController
         credential = null;
         isCalendarSaved = false;
         
-        
-        return "/";
+        return "";
     }
     
     @GetMapping(value = {"/", "/login"})
