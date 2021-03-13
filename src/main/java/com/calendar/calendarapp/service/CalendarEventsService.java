@@ -1,6 +1,6 @@
 package com.calendar.calendarapp.service;
 
-import com.calendar.calendarapp.model.CalendarObj;
+import com.calendar.calendarapp.model.CalendarEvent;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ public interface CalendarEventsService
     //
     // CalendarObj findById(String id);
     //
-    String saveAll(List<CalendarObj> entities);
+    String saveAll(List<CalendarEvent> entities);
     
-    List<CalendarObj> findAll();
+    List<CalendarEvent> findAll();
     //
     // CalendarObj update(CalendarObj entity);
     //

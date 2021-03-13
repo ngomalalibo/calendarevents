@@ -1,6 +1,6 @@
 package com.calendar.calendarapp.service;
 
-import com.calendar.calendarapp.model.CalendarObj;
+import com.calendar.calendarapp.model.CalendarEvent;
 import com.calendar.calendarapp.repository.CalendarEventsRepository;
 import com.calendar.calendarapp.utils.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class CalendarEventsServiceImpl implements CalendarEventsService
     Messages messages;
     
     @Override
-    public String saveAll(List<CalendarObj> entity)
+    public String saveAll(List<CalendarEvent> entity)
     {
         if (calendarEventsRepository.saveAll(entity).size() > 0)
         {
@@ -31,7 +31,7 @@ public class CalendarEventsServiceImpl implements CalendarEventsService
     }
     
     @Override
-    public List<CalendarObj> findAll()
+    public List<CalendarEvent> findAll()
     {
         return calendarEventsRepository.findAll();
     }

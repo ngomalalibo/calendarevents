@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString
 @Document(collection = "calendarevents")
-public class CalendarObj
+public class CalendarEvent
 {
     @Id
     private String id;

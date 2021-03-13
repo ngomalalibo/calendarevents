@@ -1,7 +1,7 @@
 package com.calendar.calendarapp.controller;
 
 import com.calendar.calendarapp.email.SendMailMailGun;
-import com.calendar.calendarapp.model.CalendarObj;
+import com.calendar.calendarapp.model.CalendarEvent;
 import com.calendar.calendarapp.service.CalendarEventsService;
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
@@ -68,7 +68,7 @@ public class GoogleCalController
     private static String userEmail;
     private static String userDisplayName;
     
-    List<CalendarObj> calendarObjs = new ArrayList<>();
+    List<CalendarEvent> calendarObjs = new ArrayList<>();
     
     @Autowired
     private CalendarEventsService service;
@@ -112,7 +112,7 @@ public class GoogleCalController
         {
             try
             {
-                List<CalendarObj> calendarEventList = getCalendarEventList(code, redirectURI, model, authentication);
+                List<CalendarEvent> calendarEventList = getCalendarEventList(code, redirectURI, model, authentication);
                 model.addAttribute("title", "Your Google Calendar Events");
                 model.addAttribute("calendarObjs", calendarEventList);
                 if (!isCalendarSaved)
@@ -123,7 +123,7 @@ public class GoogleCalController
             }
             catch (Exception e)
             {
-                model.addAttribute("calendarObjs", new ArrayList<CalendarObj>());
+                model.addAttribute("calendarObjs", new ArrayList<CalendarEvent>());
             }
             
             return "calendar";
@@ -157,7 +157,7 @@ public class GoogleCalController
     @Autowired
     private OAuth2AuthorizedClientService authorizedClientService;
     
-    private List<CalendarObj> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
+    private List<CalendarEvent> getCalendarEventList(String calenderApiCode, String redirectURL, Model model, OAuth2AuthenticationToken authentication)
     {
         com.google.api.services.calendar.model.Events eventList;
         try
@@ -199,7 +199,7 @@ public class GoogleCalController
             
             List<Event> items = eventList.getItems();
             
-            CalendarObj calendarObj;
+            CalendarEvent calendarObj;
             
             calendarObjs = new ArrayList<>();
             
@@ -211,7 +211,7 @@ public class GoogleCalController
                 long diffInMillies = endDateTime.getTime() - startDateTime.getTime();
                 int diffmin = (int) (diffInMillies / (60 * 1000));
                 
-                calendarObj = new CalendarObj();
+                calendarObj = new CalendarEvent();
                 
                 if (event.getSummary() != null && event.getSummary().length() > 0)
                 {
