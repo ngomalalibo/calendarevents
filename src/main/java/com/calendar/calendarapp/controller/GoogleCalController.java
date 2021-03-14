@@ -30,7 +30,9 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -114,7 +116,7 @@ public class GoogleCalController
         }
     }
     
-    @RequestMapping(value = "/calendar", method = RequestMethod.GET, params = "code")
+    @GetMapping(value = "/calendar", params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, Model model, OAuth2AuthenticationToken authentication)
     {
         if (isAuthorised)
@@ -135,7 +137,7 @@ public class GoogleCalController
         }
         else
         {
-            return "redirect:/";
+            return "calendar";
         }
     }
     
