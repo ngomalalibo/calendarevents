@@ -137,6 +137,9 @@ public class GoogleCalController
         }
         else
         {
+            List<CalendarEvent> calendarEventList = calendarObjs;
+            model.addAttribute("title", "Your Google Calendar Events");
+            model.addAttribute("calendarObjs", calendarEventList);
             return "calendar";
         }
     }
