@@ -121,16 +121,25 @@ public class GoogleCalController
     @GetMapping(value = "/calendar", params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, Model model, OAuth2AuthenticationToken authentication)
     {
-        System.out.println("isAuthorised > "+isAuthorised);
+        System.out.println("isAuthorised > " + isAuthorised);
         if (isAuthorised)
         {
             try
             {
                 authenticationToken = authentication;
                 List<CalendarEvent> calendarEventList = getCalendarEventList(code, redirectURI, model, authentication);
-                model.addAttribute("title", "Your Google Calendar Events");
-                model.addAttribute("calendarObjs", calendarEventList);
-                System.out.println(service.saveAll(calendarEventList));
+                if (calendarEventList == null || calendarEventList.size() == 0)
+                {
+                    model.addAttribute("title", "Your Google Calendar Events");
+                    model.addAttribute("calendarObjs", calendarObjs);
+                    model.addAttribute("name", userDisplayName);
+                }
+                else
+                {
+                    model.addAttribute("title", "Your Google Calendar Events");
+                    model.addAttribute("calendarObjs", calendarEventList);
+                    System.out.println(service.saveAll(calendarEventList));
+                }
             }
             catch (Exception e)
             {
@@ -141,11 +150,7 @@ public class GoogleCalController
         }
         else
         {
-            List<CalendarEvent> calendarEventList = getCalendarEventList(code, redirectURI, model, authenticationToken);
-            model.addAttribute("title", "Your Google Calendar Events");
-            model.addAttribute("calendarObjs", calendarEventList);
-            System.out.println(service.saveAll(calendarEventList));
-            return "calendar";
+            return "";
         }
     }
     
@@ -202,10 +207,10 @@ public class GoogleCalController
                 ResponseEntity<Map> response = restTemplate
                         .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
                 Map userAttributes = response.getBody();
-                userDisplayName = userAttributes.get("name").toString();
+                userDisplayName = userAttributes.get("name").toString() == null ? userDisplayName : userAttributes.get("name").toString();
                 model.addAttribute("name", userDisplayName);
                 
-                userEmail = userAttributes.get("email").toString();
+                userEmail = userAttributes.get("email").toString() == null ? userEmail : userAttributes.get("email").toString();
                 
                 System.out.printf("userEmail: %s, userDisplayName: %s", userEmail, userDisplayName);
             }
