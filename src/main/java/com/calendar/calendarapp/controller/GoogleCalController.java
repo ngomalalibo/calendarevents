@@ -80,6 +80,8 @@ public class GoogleCalController
     final DateTime date1 = new DateTime(0);
     final DateTime date2 = new DateTime(new Date());
     
+    OAuth2AuthenticationToken authenticationToken;
+    
     @PostMapping("/logout")
     public String logout()
     {
@@ -119,10 +121,12 @@ public class GoogleCalController
     @GetMapping(value = "/calendar", params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, Model model, OAuth2AuthenticationToken authentication)
     {
+        System.out.println("isAuthorised > "+isAuthorised);
         if (isAuthorised)
         {
             try
             {
+                authenticationToken = authentication;
                 List<CalendarEvent> calendarEventList = getCalendarEventList(code, redirectURI, model, authentication);
                 model.addAttribute("title", "Your Google Calendar Events");
                 model.addAttribute("calendarObjs", calendarEventList);
@@ -137,9 +141,10 @@ public class GoogleCalController
         }
         else
         {
-            List<CalendarEvent> calendarEventList = calendarObjs;
+            List<CalendarEvent> calendarEventList = getCalendarEventList(code, redirectURI, model, authenticationToken);
             model.addAttribute("title", "Your Google Calendar Events");
             model.addAttribute("calendarObjs", calendarEventList);
+            System.out.println(service.saveAll(calendarEventList));
             return "calendar";
         }
     }
