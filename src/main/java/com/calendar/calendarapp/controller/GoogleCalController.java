@@ -182,8 +182,6 @@ public class GoogleCalController
         com.google.api.services.calendar.model.Events eventList;
         try
         {
-            
-            //
             TokenResponse tokenResponse = flow.newTokenRequest(calenderApiCode).setRedirectUri(redirectURL).execute();
             credential = flow.createAndStoreCredential(tokenResponse, "userID");
             client = new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
@@ -221,7 +219,10 @@ public class GoogleCalController
             
             CalendarEvent calendarObj;
             
-            calendarObjs = new ArrayList<>();
+            if(items!=null && items.size()>0)
+            {
+                calendarObjs = new ArrayList<>();
+            }
             
             for (Event event : items)
             {
