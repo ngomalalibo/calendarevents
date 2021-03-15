@@ -132,7 +132,7 @@ public class GoogleCalController
                 {
                     model.addAttribute("title", "Your Google Calendar Events");
                     model.addAttribute("calendarObjs", calendarObjs);
-                    model.addAttribute("name", userDisplayName);
+                    //model.addAttribute("name", userDisplayName);
                 }
                 else
                 {
