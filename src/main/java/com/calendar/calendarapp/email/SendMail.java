@@ -70,7 +70,7 @@ public class SendMail
             
             protected PasswordAuthentication getPasswordAuthentication()
             {
-                return new PasswordAuthentication(username != null ? username : "weblibrarianapp@gmail.com", password != null ? password : "Web1234567890");
+                return new PasswordAuthentication(username != null ? username : "weblibrarianapp@gmail.com", password != null ? password : null);
             }
             
         });

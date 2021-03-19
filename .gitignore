@@ -28,6 +28,7 @@ target/
 *.pdf
 *.csv
 *.zip
+*.json
 !google.jpg
 
 ### NetBeans ###

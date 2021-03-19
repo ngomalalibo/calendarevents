@@ -121,7 +121,6 @@ public class GoogleCalController
     @GetMapping(value = "/calendar", params = "code")
     public String oauth2Callback(@RequestParam(value = "code") String code, Model model, OAuth2AuthenticationToken authentication)
     {
-        System.out.println("isAuthorised > " + isAuthorised);
         if (isAuthorised)
         {
             try
